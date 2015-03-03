@@ -1,0 +1,1 @@
+class This(object): pass

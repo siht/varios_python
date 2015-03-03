@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<a href='agregar/'>add {{ model_name }}</a>
+{% if models %}
+{%for model in models%}
+<p>{{model.id}}--{{model}}</p>
+{%endfor%}
+{% else %}
+<p>no model available</p>
+{% endif %}
+{% endblock %}

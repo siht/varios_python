@@ -1,0 +1,75 @@
+from django.contrib.contenttypes.models import ContentType
+from django.views.generic import View
+from django.http import HttpResponse
+from django.shortcuts import render
+from celular.models import MetaCell, ModCell, Celular
+from celular.forms import MetaCellForm, ModCellForm, CelularForm
+
+# Create your views here.
+
+def index(request):
+    context = {'title' : 'ningen'}
+    return render(request, 'celular/index.html', context)
+    
+class Index(View):
+    models_of_this_app = ContentType.objects.filter(app_label = 'celular')
+    title = 'admin of celular'
+    template = 'celular/index.html'
+    
+    def get(self, request):
+        return render(request, self.template, {'modelos' : self.models_of_this_app, 'title' : self.title})
+    
+    
+def model_cell(request):
+    title = 'agregar modelo de celular'
+    form = None
+    if request.method == 'POST':
+        form = MetaCellForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            ban = False
+            for elem in cd:
+                if elem:
+                    break
+            else:
+                ban = True
+            print ban
+            if not ban and (cd['marca'] and cd['modelo']): #add more errors here
+                MetaCell.objects.get_or_create(
+                    marca = cd['marca'].lower(),
+                    modelo = cd['modelo'].lower(),
+                    alias = cd['alias'].lower())
+                # response redirect here
+    else:
+        form = MetaCellForm()
+    return render(request, 'celular/input_form.html', {'form': form, 'title': title})
+    
+def modelo_color(request):
+    title = 'agregar modelo y color de celular'
+    form = None
+    if request.method == 'POST':
+        form = ModCellForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            ModCell.objects.get_or_create(
+                codigo = cd['codigo'].lower(),
+                modelo = cd['modelo'],
+                color  = cd['color'].lower(),
+                extras = cd['extras'].lower())
+    else:
+        form = ModCellForm()
+    return render(request, 'celular/input_form.html', {'form': form, 'title': title})
+
+def cell_prod(request):
+    title = 'agregar modelo y color de celular'
+    form = None
+    if request.method == 'POST':
+        form = CelularForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            Celular.objects.get_or_create(
+                codigo = cd['imei'].lower(),
+                modelo = cd['modelo'])
+    else:
+        form = CelularForm()
+    return render(request, 'celular/input_form.html', {'form': form, 'title': title})

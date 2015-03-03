@@ -1,0 +1,11 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% if models %}
+{% for link, model in models%}
+<p><a href='{{ link }}/'>admin of {{ model }}</a></p>
+{% endfor %}
+{% else %}
+<p>no models available</p>
+{% endif %}
+{% endblock %}
